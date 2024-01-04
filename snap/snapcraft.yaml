@@ -96,4 +96,4 @@ parts:
       craftctl default
       craftctl set version=$(cat .version)
       # Update the icon path
-      sed -i 's|Icon=hyperion|usr/local/share/hyperion/icons/256x256/apps/hyperion\.png|' cmake/desktop/hyperion.desktop
+      sed -i 's|Icon=hyperion|Icon=usr/local/share/hyperion/icons/256x256/apps/hyperion\.png|' cmake/desktop/hyperion.desktop

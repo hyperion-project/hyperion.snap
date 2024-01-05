@@ -1,14 +1,15 @@
 name: hyperion-ng
-base: core22
 adopt-info: hyperion-ng
 
+base: core22
 grade: stable
 confinement: strict
+
 architectures:
-  - build-for: arm64
-    build-on: arm64
-  - build-for: amd64
-    build-on: amd64
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: armhf
+
 environment:
   QT_PLUGIN_PATH: "$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins"
 
@@ -16,6 +17,8 @@ apps:
   hyperion-ng:
     extensions: [gnome]
     command: usr/local/bin/hyperiond
+    common-id: com.hyperion-project.hyperion
+    desktop: usr/local/share/hyperion/desktop/hyperion.desktop
     plugs:
       - camera
       - framebuffer
@@ -32,22 +35,13 @@ apps:
       - wayland
       - x11
       - unity7
-    common-id: com.hyperion-project.hyperion
-    desktop: usr/local/share/hyperion/desktop/hyperion.desktop
 
 parts:
   hyperion-ng:
     plugin: cmake
-    cmake-parameters:
-      - -DCMAKE_BUILD_TYPE=Release
-      - -DUSE_SYSTEM_MBEDTLS_LIBS=ON
-      - -DUSE_SYSTEM_FLATBUFFERS_LIBS=ON
-      - -DUSE_SYSTEM_PROTO_LIBS=ON
-      - -DENABLE_DEPLOY_DEPENDENCIES=OFF
-    cmake-generator: Ninja
     source-type: git
-    source: https://github.com/hyperion-project/hyperion.ng
     source-branch: master
+    source: https://github.com/hyperion-project/hyperion.ng
     parse-info: [usr/local/share/hyperion/desktop/hyperion.metainfo.xml]
     build-packages:
       - git
@@ -105,8 +99,47 @@ parts:
       - libturbojpeg
       - libcec6
       - libxcb-render-util0
+    cmake-generator: Ninja
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DUSE_SYSTEM_MBEDTLS_LIBS=ON
+      - -DUSE_SYSTEM_FLATBUFFERS_LIBS=ON
+      - -DUSE_SYSTEM_PROTO_LIBS=ON
+      - -DENABLE_DEPLOY_DEPENDENCIES=OFF
     override-pull: |
       craftctl default
       craftctl set version=$(cat .version)
-      # Update the icon path
-      sed -i 's|Icon=hyperion|Icon=usr/local/share/hyperion/icons/256x256/apps/hyperion\.png|' cmake/desktop/hyperion.desktop
+      mkdir -p "${CRAFT_PART_INSTALL}/usr/local/share/hyperion/desktop"
+      cp "${CRAFT_PART_SRC}/resources/icons/hyperion-256px.png" "${CRAFT_PART_INSTALL}/usr/local/share/hyperion/desktop/hyperion.png"
+      sed -i 's|Icon=hyperion|Icon=usr/local/share/hyperion/desktop/hyperion\.png|' ${CRAFT_PART_SRC}/cmake/desktop/hyperion.desktop
+    override-build: |
+      craftctl default
+      rm -rf "$CRAFT_PART_INSTALL/usr/local/share/hyperion/service" "$CRAFT_PART_INSTALL/usr/local/share/hyperion/icons" "$CRAFT_PART_INSTALL/usr/local/share/hyperion/scripts"
+    stage:
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libEGL_mesa*
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libGLX_mesa*
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libcec*
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libcolordprivate*
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libdconf*
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libflatbuffers*
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libicuio*
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libicutest*
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libdebug_sym*
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/libdtovl*
+
+  # This part removes all the files in this snap which already exist in connected content and base snaps. Since these files will be available
+  # at runtime from the content and base snaps, they do not need to be included in this snap itself.
+  # More info: https://forum.snapcraft.io/t/reducing-the-size-of-desktop-snaps/17280#heading--cleanup-part
+  cleanup:
+    after:
+      - hyperion-ng
+    plugin: nil
+    build-snaps:
+      - core22
+      - gnome-42-2204
+      - gtk-common-themes
+    override-prime: |
+      set -eux
+      for snap in "core22" "gnome-42-2204" "gtk-common-themes" ; do 
+        cd "/snap/$snap/current" && find . -type f,l -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+      done

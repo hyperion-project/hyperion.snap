@@ -12,6 +12,7 @@ architectures:
 
 apps:
   hyperion-ng:
+    extensions: [gnome]
     command: usr/local/bin/hyperiond
     plugs:
       - camera
@@ -25,8 +26,11 @@ apps:
       - raw-usb
       - serial-port
       - tpm
-      - unity7
+      - desktop
+      - desktop-legacy
+      - wayland
       - x11
+      - unity7
     common-id: com.hyperion-project.hyperion
     desktop: usr/local/share/hyperion/desktop/hyperion.desktop
 

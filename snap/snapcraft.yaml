@@ -9,6 +9,8 @@ architectures:
     build-on: arm64
   - build-for: amd64
     build-on: amd64
+environment:
+  QT_PLUGIN_PATH: "$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET/qt6/plugins"
 
 apps:
   hyperion-ng:
@@ -25,7 +27,6 @@ apps:
       - network
       - raw-usb
       - serial-port
-      - tpm
       - desktop
       - desktop-legacy
       - wayland
@@ -85,11 +86,16 @@ parts:
       - libxcb-render0-dev
       - libxcb-randr0-dev
     stage-packages:
+      - libqt6core6
+      - libqt6gui6
       - libqt6network6
       - libqt6widgets6
       - libqt6sql6
       - libqt6serialport6
       - libqt6sql6-sqlite
+      - qt6-gtk-platformtheme
+      - qt6-qpa-plugins
+      - qt6-wayland
       - libpython3.10
       - libusb-1.0-0
       - libasound2

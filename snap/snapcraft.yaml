@@ -56,6 +56,7 @@ parts:
       - qt6-base-dev
       - libqt6serialport6-dev
       - libqt6sql6-sqlite
+      - libqt6websockets6-dev
       - libxkbcommon-dev
       - libvulkan-dev
       - libgl1-mesa-dev
@@ -93,6 +94,7 @@ parts:
       - libqt6sql6
       - libqt6serialport6
       - libqt6sql6-sqlite
+      - libqt6websockets6
       - qt6-gtk-platformtheme
       - qt6-qpa-plugins
       - qt6-wayland

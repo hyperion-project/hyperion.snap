@@ -109,7 +109,7 @@ parts:
       - libpython3.12
       - libusb-1.0-0
       - libasound2
-      - libmbedtls14
+      - libmbedtls14t64
       - libprotobuf32
       - libturbojpeg
       - libcec6

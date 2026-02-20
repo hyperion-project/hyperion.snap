@@ -99,16 +99,16 @@ parts:
       - libdrm-dev
 
     stage-packages:
-      - libqt6core6
-      - libqt6gui6
-      - libqt6network6
-      - libqt6widgets6
+      - libqt6core6t64
+      - libqt6gui6t64
+      - libqt6network6t64
+      - libqt6widgets6t64
       - libqt6serialport6
       - libqt6sql6-sqlite
       - libqt6websockets6
       - libpython3.12
       - libusb-1.0-0
-      - libasound2
+      - libasound2t64
       - libmbedtls14t64
       - libprotobuf32
       - libturbojpeg

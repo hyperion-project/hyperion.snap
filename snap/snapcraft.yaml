@@ -106,11 +106,11 @@ parts:
       - libqt6serialport6
       - libqt6sql6-sqlite
       - libqt6websockets6
-      - libpython3.12
+      - libpython3.12t64
       - libusb-1.0-0
       - libasound2t64
       - libmbedtls14t64
-      - libprotobuf32
+      - libprotobuf32t64
       - libturbojpeg
       - libcec6
 
